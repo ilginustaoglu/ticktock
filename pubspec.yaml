@@ -30,12 +30,18 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter
 
   flutter_riverpod: ^2.5.1
   hive: ^2.2.3
   hive_flutter: ^1.1.0
   uuid: ^4.4.0
   table_calendar: ^3.1.2
+  intl: any
+  crypto: ^3.0.6
+  image_picker: ^1.1.2
+  path_provider: ^2.1.5
   # home_widget: ^0.9.0  # iOS'ta modül çakışması var; widget gerekince (örn. sadece Android) aç
 
 dev_dependencies:
@@ -56,6 +62,7 @@ dev_dependencies:
 
 # The following section is specific to Flutter packages.
 flutter:
+  generate: true
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in

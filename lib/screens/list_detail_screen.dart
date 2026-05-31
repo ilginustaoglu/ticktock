@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../core/utils/date_format_utils.dart';
+import '../l10n/app_localizations.dart';
 import '../models/todo_item.dart';
 import '../models/todo_list.dart';
 import '../providers/todo_provider.dart';
+import '../widgets/theme_mode_button.dart';
 
 class ListDetailScreen extends ConsumerStatefulWidget {
   const ListDetailScreen({super.key, required this.list});
@@ -24,8 +27,13 @@ class _ListDetailScreenState extends ConsumerState<ListDetailScreen> {
     super.dispose();
   }
 
+  String _locale(BuildContext context) =>
+      Localizations.localeOf(context).languageCode;
+
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final locale = _locale(context);
     final lists = ref.watch(todoListsProvider);
     final items = ref.watch(todoItemsProvider);
     final list = lists.cast<TodoList?>().firstWhere(
@@ -38,11 +46,8 @@ class _ListDetailScreenState extends ConsumerState<ListDetailScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(list.name),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.info_outline),
-            onPressed: () {},
-          ),
+        actions: const [
+          ThemeModeButton(),
         ],
       ),
       body: Column(
@@ -55,7 +60,7 @@ class _ListDetailScreenState extends ConsumerState<ListDetailScreen> {
                 TextField(
                   controller: _controller,
                   decoration: InputDecoration(
-                    hintText: 'Add a task',
+                    hintText: l10n.addTask,
                     prefixIcon: const Icon(Icons.add),
                     suffixIcon: _controller.text.isNotEmpty
                         ? IconButton(
@@ -74,8 +79,8 @@ class _ListDetailScreenState extends ConsumerState<ListDetailScreen> {
                     const SizedBox(width: 6),
                     Text(
                       _pendingDueDate != null
-                          ? _formatDueDate(_pendingDueDate!)
-                          : 'No deadline',
+                          ? DateFormatUtils.formatDate(_pendingDueDate!, locale)
+                          : l10n.noDeadline,
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
                             color: Theme.of(context).colorScheme.onSurfaceVariant,
                           ),
@@ -88,15 +93,16 @@ class _ListDetailScreenState extends ConsumerState<ListDetailScreen> {
                           initialDate: _pendingDueDate ?? DateTime.now(),
                           firstDate: DateTime.now().subtract(const Duration(days: 365)),
                           lastDate: DateTime.now().add(const Duration(days: 365 * 2)),
+                          locale: Localizations.localeOf(context),
                         );
                         if (date != null && mounted) setState(() => _pendingDueDate = date);
                       },
-                      child: Text(_pendingDueDate == null ? 'Set deadline' : 'Change'),
+                      child: Text(_pendingDueDate == null ? l10n.setDeadline : l10n.change),
                     ),
                     if (_pendingDueDate != null)
                       TextButton(
                         onPressed: () => setState(() => _pendingDueDate = null),
-                        child: const Text('Clear'),
+                        child: Text(l10n.clear),
                       ),
                   ],
                 ),
@@ -107,7 +113,7 @@ class _ListDetailScreenState extends ConsumerState<ListDetailScreen> {
             child: listItems.isEmpty
                 ? Center(
                     child: Text(
-                      'No tasks in this list yet',
+                      l10n.noTasksYet,
                       style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                             color: Theme.of(context).colorScheme.onSurfaceVariant,
                           ),
@@ -121,6 +127,7 @@ class _ListDetailScreenState extends ConsumerState<ListDetailScreen> {
                       return _TodoItemTile(
                         key: ValueKey(item.id),
                         item: item,
+                        locale: locale,
                         onToggle: () => ref
                             .read(todoItemsProvider.notifier)
                             .toggleCompleted(item),
@@ -137,11 +144,6 @@ class _ListDetailScreenState extends ConsumerState<ListDetailScreen> {
     );
   }
 
-  String _formatDueDate(DateTime d) {
-    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-    return '${d.day} ${months[d.month - 1]} ${d.year}';
-  }
-
   void _addItem() {
     final title = _controller.text.trim();
     if (title.isEmpty) return;
@@ -156,6 +158,7 @@ class _ListDetailScreenState extends ConsumerState<ListDetailScreen> {
       isScrollControlled: true,
       builder: (ctx) => _ItemDetailSheet(
         item: item,
+        locale: _locale(context),
         onSaveNote: (note) {
           ref.read(todoItemsProvider.notifier).updateNote(item, note);
         },
@@ -171,27 +174,30 @@ class _TodoItemTile extends StatelessWidget {
   const _TodoItemTile({
     super.key,
     required this.item,
+    required this.locale,
     required this.onToggle,
     required this.onTap,
     required this.onDelete,
   });
 
   final TodoItem item;
+  final String locale;
   final VoidCallback onToggle;
   final VoidCallback onTap;
   final VoidCallback onDelete;
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final hasNote = item.note != null && item.note!.isNotEmpty;
     final hasDue = item.dueDate != null;
     String? subtitle;
     if (hasNote && hasDue) {
-      subtitle = '${item.note}\nDue: ${_formatDue(item.dueDate!)}';
+      subtitle = '${item.note}\n${l10n.dueDate(DateFormatUtils.formatShortDate(item.dueDate!, locale))}';
     } else if (hasNote) {
       subtitle = item.note;
     } else if (hasDue) {
-      subtitle = 'Due: ${_formatDue(item.dueDate!)}';
+      subtitle = l10n.dueDate(DateFormatUtils.formatShortDate(item.dueDate!, locale));
     }
 
     return Card(
@@ -232,18 +238,15 @@ class _TodoItemTile extends StatelessWidget {
     );
   }
 
-  String _formatDue(DateTime d) {
-    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-    return '${d.day} ${months[d.month - 1]}';
-  }
-
   void _showMenu(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     showModalBottomSheet<void>(
       context: context,
       builder: (ctx) => SafeArea(
         child: ListTile(
           leading: const Icon(Icons.delete_outline),
-          title: const Text('Delete task'),
+          title: Text(l10n.deleteTask),
           onTap: () {
             Navigator.pop(ctx);
             onDelete();
@@ -257,11 +260,13 @@ class _TodoItemTile extends StatelessWidget {
 class _ItemDetailSheet extends StatefulWidget {
   const _ItemDetailSheet({
     required this.item,
+    required this.locale,
     required this.onSaveNote,
     required this.onUpdate,
   });
 
   final TodoItem item;
+  final String locale;
   final void Function(String? note) onSaveNote;
   final void Function(TodoItem updated) onUpdate;
 
@@ -288,6 +293,8 @@ class _ItemDetailSheetState extends State<_ItemDetailSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Padding(
       padding: EdgeInsets.only(
         bottom: MediaQuery.of(context).viewInsets.bottom,
@@ -313,7 +320,11 @@ class _ItemDetailSheetState extends State<_ItemDetailSheet> {
                 ListTile(
                   contentPadding: EdgeInsets.zero,
                   leading: Icon(Icons.event_outlined, color: Theme.of(context).colorScheme.onSurfaceVariant),
-                  title: Text(_dueDate != null ? _formatDue(_dueDate!) : 'No deadline'),
+                  title: Text(
+                    _dueDate != null
+                        ? DateFormatUtils.formatDate(_dueDate!, widget.locale)
+                        : l10n.noDeadline,
+                  ),
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -324,13 +335,14 @@ class _ItemDetailSheetState extends State<_ItemDetailSheet> {
                             initialDate: _dueDate ?? DateTime.now(),
                             firstDate: DateTime.now().subtract(const Duration(days: 365)),
                             lastDate: DateTime.now().add(const Duration(days: 365 * 2)),
+                            locale: Localizations.localeOf(context),
                           );
                           if (date != null && mounted) {
                             setState(() => _dueDate = date);
                             widget.onUpdate(widget.item.copyWith(dueDate: date));
                           }
                         },
-                        child: Text(_dueDate == null ? 'Set deadline' : 'Change'),
+                        child: Text(_dueDate == null ? l10n.setDeadline : l10n.change),
                       ),
                       if (_dueDate != null)
                         TextButton(
@@ -338,7 +350,7 @@ class _ItemDetailSheetState extends State<_ItemDetailSheet> {
                             setState(() => _dueDate = null);
                             widget.onUpdate(widget.item.copyWith(clearDueDate: true));
                           },
-                          child: const Text('Clear'),
+                          child: Text(l10n.clear),
                         ),
                     ],
                   ),
@@ -347,9 +359,9 @@ class _ItemDetailSheetState extends State<_ItemDetailSheet> {
                 TextField(
                   controller: _noteController,
                   maxLines: 4,
-                  decoration: const InputDecoration(
-                    labelText: 'Note',
-                    hintText: 'Add a note...',
+                  decoration: InputDecoration(
+                    labelText: l10n.note,
+                    hintText: l10n.addNoteHint,
                     alignLabelWithHint: true,
                   ),
                   onChanged: (_) => widget.onSaveNote(_noteController.text),
@@ -360,7 +372,7 @@ class _ItemDetailSheetState extends State<_ItemDetailSheet> {
                     widget.onSaveNote(_noteController.text);
                     Navigator.pop(context);
                   },
-                  child: const Text('Save'),
+                  child: Text(l10n.save),
                 ),
               ],
             ),
@@ -368,10 +380,5 @@ class _ItemDetailSheetState extends State<_ItemDetailSheet> {
         },
       ),
     );
-  }
-
-  String _formatDue(DateTime d) {
-    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-    return '${d.day} ${months[d.month - 1]} ${d.year}';
   }
 }

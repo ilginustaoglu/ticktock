@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../l10n/app_localizations.dart';
 import '../models/todo_list.dart';
 import '../providers/todo_provider.dart';
+import '../widgets/profile_app_bar_leading.dart';
 import '../widgets/theme_mode_button.dart';
 import 'list_detail_screen.dart';
 
@@ -11,11 +13,13 @@ class ListsScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final lists = ref.watch(todoListsProvider);
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Tasks'),
+        leading: const ProfileAppBarLeading(),
+        title: Text(l10n.listsTitle),
         actions: const [
           ThemeModeButton(),
         ],
@@ -32,14 +36,14 @@ class ListsScreen extends ConsumerWidget {
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    'No lists yet',
+                    l10n.noListsYet,
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
                           color: Theme.of(context).colorScheme.onSurfaceVariant,
                         ),
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Tap + to create a new list',
+                    l10n.tapToCreateList,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                           color: Theme.of(context).colorScheme.onSurfaceVariant,
                         ),
@@ -75,19 +79,20 @@ class ListsScreen extends ConsumerWidget {
   }
 
   Future<void> _confirmDelete(BuildContext context, WidgetRef ref, TodoList list) async {
+    final l10n = AppLocalizations.of(context)!;
     final ok = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Delete list'),
-        content: Text('Delete "${list.name}"? All tasks in it will be removed.'),
+        title: Text(l10n.deleteList),
+        content: Text(l10n.deleteListConfirm(list.name)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('Cancel'),
+            child: Text(l10n.cancel),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(ctx, true),
-            child: const Text('Delete'),
+            child: Text(l10n.delete),
           ),
         ],
       ),
@@ -99,17 +104,18 @@ class ListsScreen extends ConsumerWidget {
   }
 
   Future<void> _showAddListDialog(BuildContext context, WidgetRef ref) async {
+    final l10n = AppLocalizations.of(context)!;
     final name = await showDialog<String>(
       context: context,
       builder: (ctx) {
         String value = '';
         return AlertDialog(
-          title: const Text('New list'),
+          title: Text(l10n.newList),
           content: TextField(
             autofocus: true,
-            decoration: const InputDecoration(
-              labelText: 'List name',
-              hintText: 'e.g. Shopping, Work',
+            decoration: InputDecoration(
+              labelText: l10n.listName,
+              hintText: l10n.listNameHint,
             ),
             onChanged: (v) => value = v,
             onSubmitted: (v) {
@@ -120,11 +126,11 @@ class ListsScreen extends ConsumerWidget {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(ctx),
-              child: const Text('Cancel'),
+              child: Text(l10n.cancel),
             ),
             FilledButton(
               onPressed: () => Navigator.pop(ctx, value),
-              child: const Text('Add'),
+              child: Text(l10n.add),
             ),
           ],
         );
@@ -167,6 +173,8 @@ class _ListTile extends StatelessWidget {
   }
 
   void _showMenu(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     showModalBottomSheet<void>(
       context: context,
       builder: (ctx) => SafeArea(
@@ -175,7 +183,7 @@ class _ListTile extends StatelessWidget {
           children: [
             ListTile(
               leading: const Icon(Icons.delete_outline),
-              title: const Text('Delete list'),
+              title: Text(l10n.deleteList),
               onTap: () {
                 Navigator.pop(ctx);
                 onDelete();

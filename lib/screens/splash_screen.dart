@@ -1,28 +1,35 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../providers/auth_provider.dart';
 import 'home_screen.dart';
+import 'login_screen.dart';
 
 /// App launch screen using the Tick Tock splash design.
-class SplashScreen extends StatefulWidget {
+class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
 
   @override
-  State<SplashScreen> createState() => _SplashScreenState();
+  ConsumerState<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen> {
+class _SplashScreenState extends ConsumerState<SplashScreen> {
   static const _splashDuration = Duration(milliseconds: 2200);
 
   @override
   void initState() {
     super.initState();
-    Future.delayed(_splashDuration, _goToHome);
+    Future.delayed(_splashDuration, _navigateNext);
   }
 
-  void _goToHome() {
+  void _navigateNext() {
     if (!mounted) return;
+    final authState = ref.read(authProvider);
+    final destination = authState.status == AuthStatus.authenticated
+        ? const HomeScreen()
+        : const LoginScreen();
     Navigator.of(context).pushReplacement(
-      MaterialPageRoute<void>(builder: (_) => const HomeScreen()),
+      MaterialPageRoute<void>(builder: (_) => destination),
     );
   }
 
@@ -48,7 +55,6 @@ class _SplashScreenState extends State<SplashScreen> {
                   filterQuality: FilterQuality.high,
                 ),
               ),
-              // Soft edge fade: logo stays clear, gentle blend at edges
               IgnorePointer(
                 child: Container(
                   decoration: BoxDecoration(

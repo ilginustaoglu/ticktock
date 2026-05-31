@@ -3,10 +3,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 import '../core/theme/calendar_colors.dart';
+import '../core/utils/date_format_utils.dart';
+import '../l10n/app_localizations.dart';
 import '../models/calendar_event.dart';
 import '../models/todo_item.dart';
 import '../providers/calendar_provider.dart';
 import '../providers/todo_provider.dart';
+import '../widgets/profile_app_bar_leading.dart';
 import '../widgets/theme_mode_button.dart';
 
 class CalendarScreen extends ConsumerStatefulWidget {
@@ -29,6 +32,8 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final locale = Localizations.localeOf(context).languageCode;
     final events = ref.watch(calendarEventsProvider);
     final todoItems = ref.watch(todoItemsProvider);
     final eventsOnSelected = _selectedDay != null
@@ -41,9 +46,9 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Calendar'),
+        leading: const ProfileAppBarLeading(),
+        title: Text(l10n.calendarTitle),
         actions: [
-          const ThemeModeButton(),
           IconButton(
             icon: Icon(
               _format == CalendarFormat.month ? Icons.view_week : Icons.calendar_view_month,
@@ -56,6 +61,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
               });
             },
           ),
+          const ThemeModeButton(),
         ],
       ),
       body: SingleChildScrollView(
@@ -65,6 +71,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
             Card(
               margin: const EdgeInsets.all(16),
               child: TableCalendar<CalendarEvent>(
+                locale: locale,
                 firstDay: DateTime.utc(2020, 1, 1),
                 lastDay: DateTime.utc(2030, 12, 31),
                 focusedDay: _focusedDay,
@@ -126,6 +133,8 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                       _buildDayCell(context, day, events, todoItems),
                   selectedBuilder: (context, day, focusedDay) =>
                       _buildDayCell(context, day, events, todoItems),
+                  todayBuilder: (context, day, focusedDay) =>
+                      _buildDayCell(context, day, events, todoItems),
                   markerBuilder: (context, day, dayEvents) => null,
                 ),
                 headerStyle: HeaderStyle(
@@ -140,8 +149,8 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Text(
                 _selectedDay != null
-                    ? _formatDayTitle(_selectedDay!)
-                    : 'Events & tasks',
+                    ? DateFormatUtils.formatDayTitle(_selectedDay!, locale)
+                    : l10n.eventsAndTasks,
                 style: Theme.of(context).textTheme.titleMedium,
               ),
             ),
@@ -151,7 +160,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                 padding: const EdgeInsets.all(24),
                 child: Center(
                   child: Text(
-                    'No events or tasks due on this day',
+                    l10n.noEventsOrTasks,
                     style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                           color: Theme.of(context).colorScheme.onSurfaceVariant,
                         ),
@@ -164,7 +173,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
                     child: Text(
-                      'Events',
+                      l10n.events,
                       style: Theme.of(context).textTheme.labelLarge?.copyWith(
                             color: Theme.of(context).colorScheme.onSurfaceVariant,
                           ),
@@ -190,7 +199,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                                   style: Theme.of(context).textTheme.bodySmall,
                                 ),
                           trailing: const Icon(Icons.edit_outlined, size: 20),
-                          onTap: () => _showEditEventSheet(context, ref, e),
+          onTap: () => _showEditEventSheet(context, ref, e, locale),
                         ),
                       );
                     },
@@ -200,7 +209,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
                     child: Text(
-                      'Tasks due',
+                      l10n.tasksDue,
                       style: Theme.of(context).textTheme.labelLarge?.copyWith(
                             color: Theme.of(context).colorScheme.onSurfaceVariant,
                           ),
@@ -221,7 +230,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                         title: Text(t.title),
                         subtitle: t.completed
                             ? Text(
-                                'Completed',
+                                l10n.completed,
                                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
                                       color: Theme.of(context).colorScheme.tertiary,
                                     ),
@@ -236,7 +245,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => _showAddEventDialog(context, ref),
+        onPressed: () => _showAddEventDialog(context, ref, locale),
         child: const Icon(Icons.add),
       ),
     );
@@ -253,16 +262,19 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
     ];
     final isSelected = isSameDay(day, _selectedDay);
     final isToday = isSameDay(day, DateTime.now());
+    final colorScheme = Theme.of(context).colorScheme;
     final textStyle = isSelected
         ? Theme.of(context).textTheme.bodyMedium!.copyWith(
-              color: Theme.of(context).colorScheme.onPrimary,
+              color: colorScheme.onPrimary,
               fontWeight: FontWeight.w500,
               decoration: isToday ? TextDecoration.underline : null,
-              decorationColor: Theme.of(context).colorScheme.onPrimary,
+              decorationColor: colorScheme.onPrimary,
             )
         : Theme.of(context).textTheme.bodyMedium!.copyWith(
+              color: colorScheme.onSurface,
+              fontWeight: isToday ? FontWeight.w600 : null,
               decoration: isToday ? TextDecoration.underline : null,
-              decorationColor: Theme.of(context).colorScheme.primary,
+              decorationColor: colorScheme.primary,
             );
     return Stack(
       clipBehavior: Clip.none,
@@ -283,14 +295,6 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
     );
   }
 
-  String _formatDayTitle(DateTime day) {
-    const months = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
-    ];
-    return '${months[day.month - 1]} ${day.day}, ${day.year}';
-  }
-
   String _formatTimeRange(DateTime start, DateTime end) {
     return '${_formatTime(start)} – ${_formatTime(end)}';
   }
@@ -299,7 +303,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
     return '${d.hour.toString().padLeft(2, '0')}:${d.minute.toString().padLeft(2, '0')}';
   }
 
-  Future<void> _showAddEventDialog(BuildContext context, WidgetRef ref) async {
+  Future<void> _showAddEventDialog(BuildContext context, WidgetRef ref, String locale) async {
     DateTime start = _selectedDay ?? DateTime.now();
     start = DateTime(start.year, start.month, start.day, start.hour, start.minute);
     DateTime end = start.add(const Duration(hours: 1));
@@ -309,6 +313,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
       builder: (ctx) => _AddEventDialogContent(
         start: start,
         end: end,
+        locale: locale,
       ),
     );
     if (result != null &&
@@ -328,7 +333,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
     }
   }
 
-  void _showEditEventSheet(BuildContext context, WidgetRef ref, CalendarEvent event) {
+  void _showEditEventSheet(BuildContext context, WidgetRef ref, CalendarEvent event, String locale) {
     showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
@@ -336,6 +341,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
         padding: EdgeInsets.only(bottom: MediaQuery.of(ctx).viewInsets.bottom),
         child: _EditEventSheetContent(
           event: event,
+          locale: locale,
           onSave: (updated) async {
             await ref.read(calendarEventsProvider.notifier).update(updated);
             if (ctx.mounted) Navigator.of(ctx).pop();
@@ -438,11 +444,13 @@ class _DayFrameDots extends StatelessWidget {
 class _EditEventSheetContent extends StatefulWidget {
   const _EditEventSheetContent({
     required this.event,
+    required this.locale,
     required this.onSave,
     required this.onDelete,
   });
 
   final CalendarEvent event;
+  final String locale;
   final void Function(CalendarEvent updated) onSave;
   final VoidCallback onDelete;
 
@@ -502,11 +510,13 @@ class _EditEventSheetContentState extends State<_EditEventSheetContent> {
   }
 
   String _formatDateTime(DateTime d) {
-    return '${d.day}.${d.month}.${d.year} ${d.hour.toString().padLeft(2, '0')}:${d.minute.toString().padLeft(2, '0')}';
+    return DateFormatUtils.formatDateTime(d, widget.locale);
   }
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return SafeArea(
       child: SingleChildScrollView(
         padding: const EdgeInsets.all(24),
@@ -515,17 +525,17 @@ class _EditEventSheetContentState extends State<_EditEventSheetContent> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Text(
-              'Edit event',
+              l10n.editEvent,
               style: Theme.of(context).textTheme.titleLarge,
             ),
             const SizedBox(height: 16),
             TextField(
               controller: _titleController,
-              decoration: const InputDecoration(labelText: 'Title'),
+              decoration: InputDecoration(labelText: l10n.title),
             ),
             const SizedBox(height: 12),
             Text(
-              'Color',
+              l10n.color,
               style: Theme.of(context).textTheme.labelMedium?.copyWith(
                     color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
@@ -558,14 +568,14 @@ class _EditEventSheetContentState extends State<_EditEventSheetContent> {
             const SizedBox(height: 12),
             ListTile(
               contentPadding: EdgeInsets.zero,
-              title: const Text('Start'),
+              title: Text(l10n.start),
               subtitle: Text(_formatDateTime(_start)),
               trailing: const Icon(Icons.edit_calendar),
               onTap: () => _pickDateTime(true),
             ),
             ListTile(
               contentPadding: EdgeInsets.zero,
-              title: const Text('End'),
+              title: Text(l10n.end),
               subtitle: Text(_formatDateTime(_end)),
               trailing: const Icon(Icons.edit_calendar),
               onTap: () => _pickDateTime(false),
@@ -573,8 +583,8 @@ class _EditEventSheetContentState extends State<_EditEventSheetContent> {
             const SizedBox(height: 12),
             TextField(
               controller: _noteController,
-              decoration: const InputDecoration(
-                labelText: 'Note (optional)',
+              decoration: InputDecoration(
+                labelText: l10n.noteOptional,
                 alignLabelWithHint: true,
               ),
               maxLines: 2,
@@ -587,19 +597,19 @@ class _EditEventSheetContentState extends State<_EditEventSheetContent> {
                     final ok = await showDialog<bool>(
                       context: context,
                       builder: (ctx) => AlertDialog(
-                        title: const Text('Delete event'),
-                        content: const Text('Permanently delete this event?'),
+                        title: Text(l10n.deleteEvent),
+                        content: Text(l10n.deleteEventConfirm),
                         actions: [
                           TextButton(
                             onPressed: () => Navigator.pop(ctx, false),
-                            child: const Text('Cancel'),
+                            child: Text(l10n.cancel),
                           ),
                           FilledButton(
                             onPressed: () => Navigator.pop(ctx, true),
                             style: FilledButton.styleFrom(
                               backgroundColor: Theme.of(context).colorScheme.error,
                             ),
-                            child: const Text('Delete'),
+                            child: Text(l10n.delete),
                           ),
                         ],
                       ),
@@ -607,7 +617,7 @@ class _EditEventSheetContentState extends State<_EditEventSheetContent> {
                     if (ok == true) widget.onDelete();
                   },
                   icon: const Icon(Icons.delete_outline),
-                  label: const Text('Delete'),
+                  label: Text(l10n.delete),
                   style: TextButton.styleFrom(
                     foregroundColor: Theme.of(context).colorScheme.error,
                   ),
@@ -615,7 +625,7 @@ class _EditEventSheetContentState extends State<_EditEventSheetContent> {
                 const Spacer(),
                 TextButton(
                   onPressed: () => Navigator.pop(context),
-                  child: const Text('Cancel'),
+                  child: Text(l10n.cancel),
                 ),
                 const SizedBox(width: 8),
                 FilledButton(
@@ -634,7 +644,7 @@ class _EditEventSheetContentState extends State<_EditEventSheetContent> {
                       ),
                     );
                   },
-                  child: const Text('Save'),
+                  child: Text(l10n.save),
                 ),
               ],
             ),
@@ -646,10 +656,15 @@ class _EditEventSheetContentState extends State<_EditEventSheetContent> {
 }
 
 class _AddEventDialogContent extends StatefulWidget {
-  const _AddEventDialogContent({required this.start, required this.end});
+  const _AddEventDialogContent({
+    required this.start,
+    required this.end,
+    required this.locale,
+  });
 
   final DateTime start;
   final DateTime end;
+  final String locale;
 
   @override
   State<_AddEventDialogContent> createState() => _AddEventDialogContentState();
@@ -713,14 +728,15 @@ class _AddEventDialogContentState extends State<_AddEventDialogContent> {
   }
 
   String _formatDateTime(DateTime d) {
-    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-    return '${months[d.month - 1]} ${d.day}, ${d.year} ${d.hour.toString().padLeft(2, '0')}:${d.minute.toString().padLeft(2, '0')}';
+    return DateFormatUtils.formatDateTime(d, widget.locale);
   }
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return AlertDialog(
-      title: const Text('New event'),
+      title: Text(l10n.newEvent),
       content: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -728,27 +744,27 @@ class _AddEventDialogContentState extends State<_AddEventDialogContent> {
           children: [
             TextField(
               autofocus: true,
-              decoration: const InputDecoration(labelText: 'Title'),
+              decoration: InputDecoration(labelText: l10n.title),
               onChanged: (v) => title = v,
             ),
             const SizedBox(height: 12),
             ListTile(
               contentPadding: EdgeInsets.zero,
-              title: const Text('Start'),
+              title: Text(l10n.start),
               subtitle: Text(_formatDateTime(_start)),
               trailing: const Icon(Icons.edit_calendar),
               onTap: _pickStartDateTime,
             ),
             ListTile(
               contentPadding: EdgeInsets.zero,
-              title: const Text('End'),
+              title: Text(l10n.end),
               subtitle: Text(_formatDateTime(_end)),
               trailing: const Icon(Icons.edit_calendar),
               onTap: _pickEndDateTime,
             ),
             const SizedBox(height: 12),
             Text(
-              'Color',
+              l10n.color,
               style: Theme.of(context).textTheme.labelMedium?.copyWith(
                     color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
@@ -789,7 +805,7 @@ class _AddEventDialogContentState extends State<_AddEventDialogContent> {
             ),
             const SizedBox(height: 12),
             TextField(
-              decoration: const InputDecoration(labelText: 'Note (optional)'),
+              decoration: InputDecoration(labelText: l10n.noteOptional),
               maxLines: 2,
               onChanged: (v) => note = v.isEmpty ? null : v,
             ),
@@ -799,7 +815,7 @@ class _AddEventDialogContentState extends State<_AddEventDialogContent> {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: const Text('Cancel'),
+          child: Text(l10n.cancel),
         ),
         FilledButton(
           onPressed: () => Navigator.pop(context, {
@@ -809,7 +825,7 @@ class _AddEventDialogContentState extends State<_AddEventDialogContent> {
             'end': _end,
             'colorHex': selectedColorHex,
           }),
-          child: const Text('Add'),
+          child: Text(l10n.add),
         ),
       ],
     );

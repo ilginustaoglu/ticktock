@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../l10n/app_localizations.dart';
 import '../providers/theme_mode_provider.dart';
 
 /// App bar sağ köşesinde tema seçimi (Light / Dark / System).
@@ -9,6 +10,7 @@ class ThemeModeButton extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final themeMode = ref.watch(themeModeProvider);
     return PopupMenuButton<ThemeMode>(
       icon: Icon(
@@ -18,7 +20,7 @@ class ThemeModeButton extends ConsumerWidget {
                 ? Icons.light_mode
                 : Icons.brightness_auto,
       ),
-      tooltip: 'Theme',
+      tooltip: l10n.theme,
       onSelected: (mode) => ref.read(themeModeProvider.notifier).set(mode),
       itemBuilder: (context) => [
         PopupMenuItem(
@@ -27,7 +29,7 @@ class ThemeModeButton extends ConsumerWidget {
             children: [
               Icon(Icons.light_mode, size: 20, color: Theme.of(context).colorScheme.onSurface),
               const SizedBox(width: 12),
-              const Text('Light'),
+              Text(l10n.light),
             ],
           ),
         ),
@@ -37,7 +39,7 @@ class ThemeModeButton extends ConsumerWidget {
             children: [
               Icon(Icons.dark_mode, size: 20, color: Theme.of(context).colorScheme.onSurface),
               const SizedBox(width: 12),
-              const Text('Dark'),
+              Text(l10n.dark),
             ],
           ),
         ),
@@ -47,7 +49,7 @@ class ThemeModeButton extends ConsumerWidget {
             children: [
               Icon(Icons.brightness_auto, size: 20, color: Theme.of(context).colorScheme.onSurface),
               const SizedBox(width: 12),
-              const Text('System'),
+              Text(l10n.system),
             ],
           ),
         ),
