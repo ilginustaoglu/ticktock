@@ -64,4 +64,15 @@ class CalendarEvent {
         colorHex: json['colorHex'] as int?,
         todoItemId: json['todoItemId'] as String?,
       );
+
+  factory CalendarEvent.fromSupabase(Map<String, dynamic> row) => CalendarEvent(
+        id: row['id'] as String,
+        title: row['title'] as String,
+        start: DateTime.parse(row['start_at'] as String).toLocal(),
+        end: DateTime.parse(row['end_at'] as String).toLocal(),
+        allDay: row['all_day'] as bool? ?? false,
+        note: row['note'] as String?,
+        colorHex: row['color_hex'] as int?,
+        todoItemId: row['todo_item_id'] as String?,
+      );
 }

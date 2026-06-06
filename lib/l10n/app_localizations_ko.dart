@@ -214,6 +214,62 @@ class AppLocalizationsKo extends AppLocalizations {
   String get emailAlreadyInUse => '이미 등록된 이메일입니다';
 
   @override
+  String get emailConfirmationTitle => '이메일을 확인하세요';
+
+  @override
+  String emailConfirmationMessage(String email) {
+    return '$email로 확인 링크를 보냈습니다. 링크를 열어 계정을 활성화하세요.';
+  }
+
+  @override
+  String get emailConfirmationInboxHint => '받은편지함과 스팸함을 확인하세요. 링크는 이 앱을 엽니다.';
+
+  @override
+  String get resendConfirmationEmail => '확인 이메일 다시 보내기';
+
+  @override
+  String get confirmationEmailResent => '확인 이메일을 다시 보냈습니다';
+
+  @override
+  String get emailNotConfirmed => '로그인 전에 이메일을 확인해 주세요';
+
+  @override
+  String get backToLogin => '로그인으로 돌아가기';
+
+  @override
+  String get emailConfirmationResent => '이미 등록된 이메일입니다. 확인 링크를 다시 보냈습니다.';
+
+  @override
+  String get emailRateLimit =>
+      '이메일 전송 한도에 도달했습니다(무료 Supabase 기준 시간당 약 4통). 1시간 정도 기다리거나 스팸함을 확인하거나 사용자 SMTP를 설정하세요.';
+
+  @override
+  String get emailConfirmed => '이메일 확인됨';
+
+  @override
+  String get emailNotConfirmedStatus => '이메일 미확인';
+
+  @override
+  String get emailConfirmedTooltip =>
+      '이메일이 인증되었습니다. 데이터베이스의 profiles.email_confirmed_at이 설정되었습니다.';
+
+  @override
+  String get emailNotConfirmedTooltip =>
+      '이메일이 아직 인증되지 않았습니다. Supabase Table Editor에서 profiles.email_confirmed_at을 확인하세요.';
+
+  @override
+  String get loginFailedHelp =>
+      'Sign-in failed. Common causes: email not confirmed yet (Confirm user in Supabase), wrong password, or account was created only on this device before Supabase was connected.';
+
+  @override
+  String get localAccountLogin =>
+      'Signed in with your on-device account. Data is not in the cloud yet — sign up in the app with the same email to sync with Supabase.';
+
+  @override
+  String get profileMissing =>
+      'Account exists but profile could not be loaded. Run database/migrations/001_profiles_email_confirmed.sql in Supabase.';
+
+  @override
   String get profileTitle => '프로필';
 
   @override

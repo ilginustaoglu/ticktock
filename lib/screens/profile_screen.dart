@@ -236,9 +236,54 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                         ),
                     textAlign: TextAlign.center,
                   ),
+                  if (AuthNotifier.usesRemoteDb) ...[
+                    const SizedBox(height: 16),
+                    _EmailConfirmationStatusChip(user: user),
+                  ],
                 ],
               ),
             ),
+    );
+  }
+}
+
+class _EmailConfirmationStatusChip extends StatelessWidget {
+  const _EmailConfirmationStatusChip({required this.user});
+
+  final User user;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final confirmed = user.isEmailConfirmed;
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return Tooltip(
+      message: confirmed
+          ? l10n.emailConfirmedTooltip
+          : l10n.emailNotConfirmedTooltip,
+      child: Chip(
+        avatar: Icon(
+          confirmed ? Icons.verified_outlined : Icons.mark_email_unread_outlined,
+          size: 18,
+          color: confirmed ? colorScheme.primary : colorScheme.error,
+        ),
+        label: Text(
+          confirmed ? l10n.emailConfirmed : l10n.emailNotConfirmedStatus,
+          style: TextStyle(
+            color: confirmed ? colorScheme.primary : colorScheme.error,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        side: BorderSide(
+          color: confirmed
+              ? colorScheme.primary.withValues(alpha: 0.5)
+              : colorScheme.error.withValues(alpha: 0.5),
+        ),
+        backgroundColor: confirmed
+            ? colorScheme.primaryContainer.withValues(alpha: 0.35)
+            : colorScheme.errorContainer.withValues(alpha: 0.35),
+      ),
     );
   }
 }

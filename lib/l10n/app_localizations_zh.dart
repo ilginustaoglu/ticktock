@@ -214,6 +214,62 @@ class AppLocalizationsZh extends AppLocalizations {
   String get emailAlreadyInUse => '该邮箱已注册';
 
   @override
+  String get emailConfirmationTitle => '确认您的邮箱';
+
+  @override
+  String emailConfirmationMessage(String email) {
+    return '我们已向 $email 发送确认链接。请打开链接以激活账户。';
+  }
+
+  @override
+  String get emailConfirmationInboxHint => '请检查收件箱和垃圾邮件。链接将打开此应用。';
+
+  @override
+  String get resendConfirmationEmail => '重新发送确认邮件';
+
+  @override
+  String get confirmationEmailResent => '确认邮件已重新发送';
+
+  @override
+  String get emailNotConfirmed => '登录前请先确认邮箱';
+
+  @override
+  String get backToLogin => '返回登录';
+
+  @override
+  String get emailConfirmationResent => '该邮箱已注册。我们已重新发送确认链接。';
+
+  @override
+  String get emailRateLimit =>
+      '已达到邮件发送上限（免费 Supabase 约每小时 4 封）。请等待约一小时、检查垃圾邮件或配置自定义 SMTP。';
+
+  @override
+  String get emailConfirmed => '邮箱已确认';
+
+  @override
+  String get emailNotConfirmedStatus => '邮箱未确认';
+
+  @override
+  String get emailConfirmedTooltip =>
+      '您的邮箱已验证。数据库中 profiles.email_confirmed_at 已设置。';
+
+  @override
+  String get emailNotConfirmedTooltip =>
+      '邮箱尚未验证。请在 Supabase Table Editor 中查看 profiles.email_confirmed_at。';
+
+  @override
+  String get loginFailedHelp =>
+      'Sign-in failed. Common causes: email not confirmed yet (Confirm user in Supabase), wrong password, or account was created only on this device before Supabase was connected.';
+
+  @override
+  String get localAccountLogin =>
+      'Signed in with your on-device account. Data is not in the cloud yet — sign up in the app with the same email to sync with Supabase.';
+
+  @override
+  String get profileMissing =>
+      'Account exists but profile could not be loaded. Run database/migrations/001_profiles_email_confirmed.sql in Supabase.';
+
+  @override
   String get profileTitle => '个人资料';
 
   @override

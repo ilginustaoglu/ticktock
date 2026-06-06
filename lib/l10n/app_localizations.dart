@@ -514,6 +514,102 @@ abstract class AppLocalizations {
   /// **'This email is already registered'**
   String get emailAlreadyInUse;
 
+  /// No description provided for @emailConfirmationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm your email'**
+  String get emailConfirmationTitle;
+
+  /// No description provided for @emailConfirmationMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'We sent a confirmation link to {email}. Open it to activate your account.'**
+  String emailConfirmationMessage(String email);
+
+  /// No description provided for @emailConfirmationInboxHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Check your inbox and spam folder. The link opens this app.'**
+  String get emailConfirmationInboxHint;
+
+  /// No description provided for @resendConfirmationEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Resend confirmation email'**
+  String get resendConfirmationEmail;
+
+  /// No description provided for @confirmationEmailResent.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirmation email sent again'**
+  String get confirmationEmailResent;
+
+  /// No description provided for @emailNotConfirmed.
+  ///
+  /// In en, this message translates to:
+  /// **'Please confirm your email before logging in'**
+  String get emailNotConfirmed;
+
+  /// No description provided for @backToLogin.
+  ///
+  /// In en, this message translates to:
+  /// **'Back to login'**
+  String get backToLogin;
+
+  /// No description provided for @emailConfirmationResent.
+  ///
+  /// In en, this message translates to:
+  /// **'This email is already registered. We sent the confirmation link again.'**
+  String get emailConfirmationResent;
+
+  /// No description provided for @emailRateLimit.
+  ///
+  /// In en, this message translates to:
+  /// **'Supabase email limit reached (~4 per hour). Account was not created and no confirmation email was sent. Wait about an hour, or for development: Authentication → Email → turn off Confirm email.'**
+  String get emailRateLimit;
+
+  /// No description provided for @emailConfirmed.
+  ///
+  /// In en, this message translates to:
+  /// **'Email confirmed'**
+  String get emailConfirmed;
+
+  /// No description provided for @emailNotConfirmedStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Email not confirmed'**
+  String get emailNotConfirmedStatus;
+
+  /// No description provided for @emailConfirmedTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Your email is verified. profiles.email_confirmed_at is set in the database.'**
+  String get emailConfirmedTooltip;
+
+  /// No description provided for @emailNotConfirmedTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Email not verified yet. Check profiles.email_confirmed_at in Supabase Table Editor.'**
+  String get emailNotConfirmedTooltip;
+
+  /// No description provided for @loginFailedHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign-in failed. Common causes: email not confirmed yet (Confirm user in Supabase), wrong password, or account was created only on this device before Supabase was connected.'**
+  String get loginFailedHelp;
+
+  /// No description provided for @localAccountLogin.
+  ///
+  /// In en, this message translates to:
+  /// **'Signed in with your on-device account. Data is not in the cloud yet — sign up in the app with the same email to sync with Supabase.'**
+  String get localAccountLogin;
+
+  /// No description provided for @profileMissing.
+  ///
+  /// In en, this message translates to:
+  /// **'Account exists but profile could not be loaded. Run database/migrations/001_profiles_email_confirmed.sql in Supabase.'**
+  String get profileMissing;
+
   /// No description provided for @profileTitle.
   ///
   /// In en, this message translates to:

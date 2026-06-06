@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../l10n/app_localizations.dart';
 import '../providers/auth_provider.dart';
+import '../providers/data_sync.dart';
 import '../providers/locale_provider.dart';
 import '../providers/theme_mode_provider.dart';
 import '../widgets/profile_app_bar_leading.dart';
@@ -140,6 +141,7 @@ class SettingsScreen extends ConsumerWidget {
 
   Future<void> _logOut(BuildContext context, WidgetRef ref) async {
     await ref.read(authProvider.notifier).logOut();
+    await reloadUserData(ref);
     if (context.mounted) {
       Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute<void>(builder: (_) => const LoginScreen()),

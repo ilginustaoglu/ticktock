@@ -215,6 +215,65 @@ class AppLocalizationsFr extends AppLocalizations {
   String get emailAlreadyInUse => 'Cet e-mail est déjà enregistré';
 
   @override
+  String get emailConfirmationTitle => 'Confirmez votre e-mail';
+
+  @override
+  String emailConfirmationMessage(String email) {
+    return 'Nous avons envoyé un lien de confirmation à $email. Ouvrez-le pour activer votre compte.';
+  }
+
+  @override
+  String get emailConfirmationInboxHint =>
+      'Vérifiez votre boîte de réception et les spams. Le lien ouvre cette application.';
+
+  @override
+  String get resendConfirmationEmail => 'Renvoyer l\'e-mail de confirmation';
+
+  @override
+  String get confirmationEmailResent => 'E-mail de confirmation renvoyé';
+
+  @override
+  String get emailNotConfirmed =>
+      'Veuillez confirmer votre e-mail avant de vous connecter';
+
+  @override
+  String get backToLogin => 'Retour à la connexion';
+
+  @override
+  String get emailConfirmationResent =>
+      'Cet e-mail est déjà enregistré. Nous avons renvoyé le lien de confirmation.';
+
+  @override
+  String get emailRateLimit =>
+      'Limite d\'envoi atteinte (~4 par heure sur Supabase gratuit). Attendez une heure, vérifiez les spams ou configurez un SMTP personnalisé.';
+
+  @override
+  String get emailConfirmed => 'E-mail confirmé';
+
+  @override
+  String get emailNotConfirmedStatus => 'E-mail non confirmé';
+
+  @override
+  String get emailConfirmedTooltip =>
+      'Votre e-mail est vérifié. profiles.email_confirmed_at est défini dans la base de données.';
+
+  @override
+  String get emailNotConfirmedTooltip =>
+      'E-mail pas encore vérifié. Vérifiez profiles.email_confirmed_at dans Supabase Table Editor.';
+
+  @override
+  String get loginFailedHelp =>
+      'Sign-in failed. Common causes: email not confirmed yet (Confirm user in Supabase), wrong password, or account was created only on this device before Supabase was connected.';
+
+  @override
+  String get localAccountLogin =>
+      'Signed in with your on-device account. Data is not in the cloud yet — sign up in the app with the same email to sync with Supabase.';
+
+  @override
+  String get profileMissing =>
+      'Account exists but profile could not be loaded. Run database/migrations/001_profiles_email_confirmed.sql in Supabase.';
+
+  @override
   String get profileTitle => 'Profil';
 
   @override

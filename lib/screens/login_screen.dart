@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../l10n/app_localizations.dart';
 import '../providers/auth_provider.dart';
+import '../providers/data_sync.dart';
+import 'email_confirmation_screen.dart';
 import 'home_screen.dart';
 import 'signup_screen.dart';
 
@@ -37,9 +39,29 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         return l10n.emailInvalid;
       case 'invalidCredentials':
         return l10n.invalidCredentials;
+      case 'emailNotConfirmed':
+        return l10n.emailNotConfirmed;
+      case 'emailRateLimit':
+        return l10n.emailRateLimit;
+      case 'loginFailedHelp':
+        return l10n.loginFailedHelp;
+      case 'localAccountLogin':
+        return l10n.localAccountLogin;
+      case 'profileMissing':
+        return l10n.profileMissing;
       default:
         return l10n.invalidCredentials;
     }
+  }
+
+  void _goToEmailConfirmation() {
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) => EmailConfirmationScreen(
+          email: _emailController.text.trim(),
+        ),
+      ),
+    );
   }
 
   Future<void> _submit() async {
@@ -51,14 +73,38 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         );
     if (!mounted) return;
     setState(() => _isLoading = false);
-    if (error == null) {
+    if (error == null || error == 'localAccountLogin') {
+      await reloadUserData(ref);
+      if (!mounted) return;
       Navigator.of(context).pushReplacement(
         MaterialPageRoute<void>(builder: (_) => const HomeScreen()),
       );
+      if (error == 'localAccountLogin') {
+        final l10n = AppLocalizations.of(context)!;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(l10n.localAccountLogin),
+            duration: const Duration(seconds: 6),
+          ),
+        );
+      }
     } else {
       final l10n = AppLocalizations.of(context)!;
+      final showResendAction =
+          error == 'emailNotConfirmed' || error == 'loginFailedHelp';
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(_errorMessage(l10n, error))),
+        SnackBar(
+          content: Text(_errorMessage(l10n, error)),
+          duration: error == 'loginFailedHelp'
+              ? const Duration(seconds: 8)
+              : const Duration(seconds: 4),
+          action: showResendAction
+              ? SnackBarAction(
+                  label: l10n.resendConfirmationEmail,
+                  onPressed: _goToEmailConfirmation,
+                )
+              : null,
+        ),
       );
     }
   }

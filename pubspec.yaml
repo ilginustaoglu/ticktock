@@ -42,6 +42,8 @@ dependencies:
   crypto: ^3.0.6
   image_picker: ^1.1.2
   path_provider: ^2.1.5
+  supabase_flutter: ^2.9.1
+  flutter_dotenv: ^5.2.1
   # home_widget: ^0.9.0  # iOS'ta modül çakışması var; widget gerekince (örn. sadece Android) aç
 
 dev_dependencies:
@@ -72,6 +74,7 @@ flutter:
   assets:
     - lib/logo/tick_tock_logo.png
     - lib/logo/tick_tock_splash.png
+    - .env
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

@@ -17,12 +17,15 @@ class ProfileAppBarLeading extends ConsumerWidget {
     final l10n = AppLocalizations.of(context)!;
     final user = ref.watch(authProvider).user;
 
-    return IconButton(
-      onPressed: () {
-        ref.read(homeTabIndexProvider.notifier).state = profileTabIndex;
-      },
-      icon: ProfileAvatar(user: user, radius: 18),
-      tooltip: l10n.navProfile,
+    return Padding(
+      padding: const EdgeInsets.only(left: 10),
+      child: IconButton(
+        onPressed: () {
+          ref.read(homeTabIndexProvider.notifier).state = profileTabIndex;
+        },
+        icon: ProfileAvatar(user: user, radius: 18),
+        tooltip: l10n.navProfile,
+      ),
     );
   }
 }

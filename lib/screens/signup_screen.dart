@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../l10n/app_localizations.dart';
 import '../providers/auth_provider.dart';
+import '../providers/data_sync.dart';
+import 'email_confirmation_screen.dart';
 import 'home_screen.dart';
 
 class SignUpScreen extends ConsumerStatefulWidget {
@@ -49,6 +51,8 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
         return l10n.nameRequired;
       case 'emailAlreadyInUse':
         return l10n.emailAlreadyInUse;
+      case 'emailRateLimit':
+        return l10n.emailRateLimit;
       default:
         return l10n.invalidCredentials;
     }
@@ -66,7 +70,22 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
         );
     if (!mounted) return;
     setState(() => _isLoading = false);
-    if (error == null) {
+    if (error == 'emailConfirmationRequired' || error == 'emailConfirmationResent') {
+      final l10n = AppLocalizations.of(context)!;
+      if (error == 'emailConfirmationResent') {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(l10n.emailConfirmationResent)),
+        );
+      }
+      Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute<void>(
+          builder: (_) => EmailConfirmationScreen(email: _emailController.text.trim()),
+        ),
+        (_) => false,
+      );
+    } else if (error == null) {
+      await reloadUserData(ref);
+      if (!mounted) return;
       Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute<void>(builder: (_) => const HomeScreen()),
         (_) => false,

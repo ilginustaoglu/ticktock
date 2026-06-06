@@ -245,6 +245,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
+        heroTag: 'calendar_fab',
         onPressed: () => _showAddEventDialog(context, ref, locale),
         child: const Icon(Icons.add),
       ),

@@ -41,4 +41,13 @@ class TodoList {
             ? DateTime.parse(json['createdAt'] as String)
             : null,
       );
+
+  factory TodoList.fromSupabase(Map<String, dynamic> row) => TodoList(
+        id: row['id'] as String,
+        name: row['name'] as String,
+        colorHex: row['color_hex'] as int?,
+        createdAt: row['created_at'] != null
+            ? DateTime.parse(row['created_at'] as String).toLocal()
+            : null,
+      );
 }

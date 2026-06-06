@@ -214,6 +214,63 @@ class AppLocalizationsJa extends AppLocalizations {
   String get emailAlreadyInUse => 'このメールは既に登録されています';
 
   @override
+  String get emailConfirmationTitle => 'メールを確認してください';
+
+  @override
+  String emailConfirmationMessage(String email) {
+    return '$email に確認リンクを送信しました。リンクを開いてアカウントを有効化してください。';
+  }
+
+  @override
+  String get emailConfirmationInboxHint =>
+      '受信トレイと迷惑メールを確認してください。リンクはこのアプリを開きます。';
+
+  @override
+  String get resendConfirmationEmail => '確認メールを再送信';
+
+  @override
+  String get confirmationEmailResent => '確認メールを再送信しました';
+
+  @override
+  String get emailNotConfirmed => 'ログインする前にメールを確認してください';
+
+  @override
+  String get backToLogin => 'ログインに戻る';
+
+  @override
+  String get emailConfirmationResent => 'このメールは既に登録されています。確認リンクを再送信しました。';
+
+  @override
+  String get emailRateLimit =>
+      'メール送信上限に達しました（無料Supabaseは約4通/時）。1時間ほど待つか、迷惑メールを確認するか、カスタムSMTPを設定してください。';
+
+  @override
+  String get emailConfirmed => 'メール確認済み';
+
+  @override
+  String get emailNotConfirmedStatus => 'メール未確認';
+
+  @override
+  String get emailConfirmedTooltip =>
+      'メールは確認済みです。データベースの profiles.email_confirmed_at が設定されています。';
+
+  @override
+  String get emailNotConfirmedTooltip =>
+      'メールはまだ確認されていません。Supabase Table Editor の profiles.email_confirmed_at を確認してください。';
+
+  @override
+  String get loginFailedHelp =>
+      'Sign-in failed. Common causes: email not confirmed yet (Confirm user in Supabase), wrong password, or account was created only on this device before Supabase was connected.';
+
+  @override
+  String get localAccountLogin =>
+      'Signed in with your on-device account. Data is not in the cloud yet — sign up in the app with the same email to sync with Supabase.';
+
+  @override
+  String get profileMissing =>
+      'Account exists but profile could not be loaded. Run database/migrations/001_profiles_email_confirmed.sql in Supabase.';
+
+  @override
   String get profileTitle => 'プロフィール';
 
   @override

@@ -19,7 +19,15 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    Future.delayed(_splashDuration, _navigateNext);
+    _navigateWhenReady();
+  }
+
+  Future<void> _navigateWhenReady() async {
+    await Future.delayed(_splashDuration);
+    while (mounted && ref.read(authProvider).status == AuthStatus.loading) {
+      await Future.delayed(const Duration(milliseconds: 100));
+    }
+    _navigateNext();
   }
 
   void _navigateNext() {

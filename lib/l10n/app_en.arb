@@ -83,6 +83,27 @@
   "createAccount": "Create account",
   "welcomeBack": "Welcome back",
   "emailAlreadyInUse": "This email is already registered",
+  "emailConfirmationTitle": "Confirm your email",
+  "emailConfirmationMessage": "We sent a confirmation link to {email}. Open it to activate your account.",
+  "@emailConfirmationMessage": {
+    "placeholders": {
+      "email": {"type": "String"}
+    }
+  },
+  "emailConfirmationInboxHint": "Check your inbox and spam folder. The link opens this app.",
+  "resendConfirmationEmail": "Resend confirmation email",
+  "confirmationEmailResent": "Confirmation email sent again",
+  "emailNotConfirmed": "Please confirm your email before logging in",
+  "backToLogin": "Back to login",
+  "emailConfirmationResent": "This email is already registered. We sent the confirmation link again.",
+  "emailRateLimit": "Supabase email limit reached (~4 per hour). Account was not created and no confirmation email was sent. Wait about an hour, or for development: Authentication → Email → turn off Confirm email.",
+  "emailConfirmed": "Email confirmed",
+  "emailNotConfirmedStatus": "Email not confirmed",
+  "emailConfirmedTooltip": "Your email is verified. profiles.email_confirmed_at is set in the database.",
+  "emailNotConfirmedTooltip": "Email not verified yet. Check profiles.email_confirmed_at in Supabase Table Editor.",
+  "loginFailedHelp": "Sign-in failed. Common causes: email not confirmed yet (Confirm user in Supabase), wrong password, or account was created only on this device before Supabase was connected.",
+  "localAccountLogin": "Signed in with your on-device account. Data is not in the cloud yet — sign up in the app with the same email to sync with Supabase.",
+  "profileMissing": "Account exists but profile could not be loaded. Run database/migrations/001_profiles_email_confirmed.sql in Supabase.",
 
   "profileTitle": "Profile",
   "editProfile": "Edit profile",

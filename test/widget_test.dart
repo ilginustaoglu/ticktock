@@ -18,7 +18,7 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            themeModeProvider.overrideWith((ref) => _TestThemeModeNotifier()),
+            themeModeProvider.overrideWith((ref) => _TestThemeModeNotifier(ref)),
           ],
           child: const MaterialApp(
             home: Scaffold(
@@ -40,10 +40,10 @@ void main() {
 
 /// Test için: storage kullanmadan sabit ThemeMode döner.
 class _TestThemeModeNotifier extends ThemeModeNotifier {
-  _TestThemeModeNotifier() : super() {
+  _TestThemeModeNotifier(super.ref) {
     state = ThemeMode.system;
   }
 
   @override
-  void load() {}
+  Future<void> load() async {}
 }

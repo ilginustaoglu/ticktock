@@ -71,4 +71,21 @@ class TodoItem {
             ? DateTime.parse(json['dueDate'] as String)
             : null,
       );
+
+  factory TodoItem.fromSupabase(Map<String, dynamic> row) => TodoItem(
+        id: row['id'] as String,
+        listId: row['list_id'] as String,
+        title: row['title'] as String,
+        note: row['note'] as String?,
+        completed: row['completed'] as bool? ?? false,
+        createdAt: row['created_at'] != null
+            ? DateTime.parse(row['created_at'] as String).toLocal()
+            : null,
+        completedAt: row['completed_at'] != null
+            ? DateTime.parse(row['completed_at'] as String).toLocal()
+            : null,
+        dueDate: row['due_date'] != null
+            ? DateTime.parse(row['due_date'] as String).toLocal()
+            : null,
+      );
 }

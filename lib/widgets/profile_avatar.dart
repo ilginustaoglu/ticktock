@@ -14,24 +14,34 @@ class ProfileAvatar extends StatelessWidget {
   final User? user;
   final double radius;
 
+  ImageProvider? _imageProvider(User user) {
+    final path = user.profileImagePath;
+    if (path != null && File(path).existsSync()) {
+      return FileImage(File(path));
+    }
+    final url = user.profileImageUrl;
+    if (url != null && url.isNotEmpty) {
+      return NetworkImage(url);
+    }
+    return null;
+  }
+
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    final imagePath = user?.profileImagePath;
-    final hasImage =
-        imagePath != null && File(imagePath).existsSync();
+    final image = user != null ? _imageProvider(user!) : null;
 
     return CircleAvatar(
       radius: radius,
       backgroundColor: colorScheme.primaryContainer,
-      backgroundImage: hasImage ? FileImage(File(imagePath)) : null,
-      child: hasImage
-          ? null
-          : Icon(
+      backgroundImage: image,
+      child: image == null
+          ? Icon(
               Icons.person,
               size: radius,
               color: colorScheme.onPrimaryContainer,
-            ),
+            )
+          : null,
     );
   }
 }

@@ -215,6 +215,64 @@ class AppLocalizationsTr extends AppLocalizations {
   String get emailAlreadyInUse => 'Bu e-posta zaten kayıtlı';
 
   @override
+  String get emailConfirmationTitle => 'E-postanızı onaylayın';
+
+  @override
+  String emailConfirmationMessage(String email) {
+    return '$email adresine onay linki gönderdik. Hesabınızı etkinleştirmek için linke tıklayın.';
+  }
+
+  @override
+  String get emailConfirmationInboxHint =>
+      'Gelen kutunuzu ve spam klasörünü kontrol edin. Link uygulamayı açar.';
+
+  @override
+  String get resendConfirmationEmail => 'Onay e-postasını tekrar gönder';
+
+  @override
+  String get confirmationEmailResent => 'Onay e-postası tekrar gönderildi';
+
+  @override
+  String get emailNotConfirmed => 'Giriş yapmadan önce e-postanızı onaylayın';
+
+  @override
+  String get backToLogin => 'Giriş sayfasına dön';
+
+  @override
+  String get emailConfirmationResent =>
+      'Bu e-posta zaten kayıtlı. Onay linkini tekrar gönderdik.';
+
+  @override
+  String get emailRateLimit =>
+      'Supabase mail limiti doldu (saatte ~4 mail). Yeni hesap oluşturulamadı ve onay maili gönderilmedi. ~1 saat bekleyin veya geliştirme için: Authentication → Email → Confirm email → KAPALI.';
+
+  @override
+  String get emailConfirmed => 'E-posta onaylı';
+
+  @override
+  String get emailNotConfirmedStatus => 'E-posta onaylanmadı';
+
+  @override
+  String get emailConfirmedTooltip =>
+      'E-postanız doğrulandı. Veritabanında profiles.email_confirmed_at dolu.';
+
+  @override
+  String get emailNotConfirmedTooltip =>
+      'E-posta henüz doğrulanmadı. Supabase Table Editor\'da profiles.email_confirmed_at kolonuna bakın.';
+
+  @override
+  String get loginFailedHelp =>
+      'Giriş başarısız. Sık nedenler: e-posta henüz onaylanmadı (Supabase\'te Confirm user), şifre yanlış veya hesap Supabase bağlanmadan önce sadece bu cihazda oluşturuldu.';
+
+  @override
+  String get localAccountLogin =>
+      'Cihazdaki hesapla giriş yapıldı. Veriler henüz bulutta değil — aynı e-postayla uygulamadan kayıt olarak Supabase\'e taşıyabilirsin.';
+
+  @override
+  String get profileMissing =>
+      'Hesap var ama profil yüklenemedi. Supabase SQL Editor\'da database/migrations/001_profiles_email_confirmed.sql dosyasını çalıştır.';
+
+  @override
   String get profileTitle => 'Profil';
 
   @override

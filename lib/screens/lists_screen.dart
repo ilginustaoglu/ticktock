@@ -64,6 +64,7 @@ class ListsScreen extends ConsumerWidget {
               },
             ),
       floatingActionButton: FloatingActionButton(
+        heroTag: 'lists_fab',
         onPressed: () => _showAddListDialog(context, ref),
         child: const Icon(Icons.add),
       ),
