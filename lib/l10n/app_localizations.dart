@@ -688,6 +688,36 @@ abstract class AppLocalizations {
   /// **'Account'**
   String get account;
 
+  /// No description provided for @deleteAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete account'**
+  String get deleteAccount;
+
+  /// No description provided for @deleteAccountConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete account?'**
+  String get deleteAccountConfirmTitle;
+
+  /// No description provided for @deleteAccountConfirmMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'This will permanently delete your account and all your data, including lists, tasks, and calendar events. This action cannot be undone.'**
+  String get deleteAccountConfirmMessage;
+
+  /// No description provided for @accountDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Your account has been deleted'**
+  String get accountDeleted;
+
+  /// No description provided for @deleteAccountFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not delete account. Please try again.'**
+  String get deleteAccountFailed;
+
   /// No description provided for @selectLanguage.
   ///
   /// In en, this message translates to:

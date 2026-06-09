@@ -310,6 +310,22 @@ class AppLocalizationsJa extends AppLocalizations {
   String get account => 'アカウント';
 
   @override
+  String get deleteAccount => 'アカウントを削除';
+
+  @override
+  String get deleteAccountConfirmTitle => 'アカウントを削除しますか？';
+
+  @override
+  String get deleteAccountConfirmMessage =>
+      'アカウントとリスト、タスク、カレンダーイベントを含むすべてのデータが完全に削除されます。この操作は取り消せません。';
+
+  @override
+  String get accountDeleted => 'アカウントが削除されました';
+
+  @override
+  String get deleteAccountFailed => 'アカウントを削除できませんでした。もう一度お試しください。';
+
+  @override
   String get selectLanguage => '言語を選択';
 
   @override

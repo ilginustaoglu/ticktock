@@ -309,6 +309,22 @@ class AppLocalizationsZh extends AppLocalizations {
   String get account => '账号';
 
   @override
+  String get deleteAccount => '删除账户';
+
+  @override
+  String get deleteAccountConfirmTitle => '删除账户？';
+
+  @override
+  String get deleteAccountConfirmMessage =>
+      '这将永久删除您的账户及所有数据，包括列表、任务和日历事件。此操作无法撤销。';
+
+  @override
+  String get accountDeleted => '您的账户已删除';
+
+  @override
+  String get deleteAccountFailed => '无法删除账户，请重试。';
+
+  @override
   String get selectLanguage => '选择语言';
 
   @override

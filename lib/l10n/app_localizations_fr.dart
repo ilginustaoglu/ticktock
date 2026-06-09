@@ -313,6 +313,23 @@ class AppLocalizationsFr extends AppLocalizations {
   String get account => 'Compte';
 
   @override
+  String get deleteAccount => 'Supprimer le compte';
+
+  @override
+  String get deleteAccountConfirmTitle => 'Supprimer le compte ?';
+
+  @override
+  String get deleteAccountConfirmMessage =>
+      'Cela supprimera définitivement votre compte et toutes vos données, y compris les listes, tâches et événements du calendrier. Cette action est irréversible.';
+
+  @override
+  String get accountDeleted => 'Votre compte a été supprimé';
+
+  @override
+  String get deleteAccountFailed =>
+      'Impossible de supprimer le compte. Veuillez réessayer.';
+
+  @override
   String get selectLanguage => 'Choisir la langue';
 
   @override

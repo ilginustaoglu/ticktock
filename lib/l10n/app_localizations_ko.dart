@@ -309,6 +309,22 @@ class AppLocalizationsKo extends AppLocalizations {
   String get account => '계정';
 
   @override
+  String get deleteAccount => '계정 삭제';
+
+  @override
+  String get deleteAccountConfirmTitle => '계정을 삭제할까요?';
+
+  @override
+  String get deleteAccountConfirmMessage =>
+      '계정과 목록, 작업, 캘린더 일정을 포함한 모든 데이터가 영구적으로 삭제됩니다. 이 작업은 되돌릴 수 없습니다.';
+
+  @override
+  String get accountDeleted => '계정이 삭제되었습니다';
+
+  @override
+  String get deleteAccountFailed => '계정을 삭제할 수 없습니다. 다시 시도해 주세요.';
+
+  @override
   String get selectLanguage => '언어 선택';
 
   @override

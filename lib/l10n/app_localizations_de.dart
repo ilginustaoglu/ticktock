@@ -313,6 +313,23 @@ class AppLocalizationsDe extends AppLocalizations {
   String get account => 'Konto';
 
   @override
+  String get deleteAccount => 'Konto löschen';
+
+  @override
+  String get deleteAccountConfirmTitle => 'Konto löschen?';
+
+  @override
+  String get deleteAccountConfirmMessage =>
+      'Dies löscht Ihr Konto und alle Daten dauerhaft, einschließlich Listen, Aufgaben und Kalenderereignisse. Diese Aktion kann nicht rückgängig gemacht werden.';
+
+  @override
+  String get accountDeleted => 'Ihr Konto wurde gelöscht';
+
+  @override
+  String get deleteAccountFailed =>
+      'Konto konnte nicht gelöscht werden. Bitte versuchen Sie es erneut.';
+
+  @override
   String get selectLanguage => 'Sprache auswählen';
 
   @override

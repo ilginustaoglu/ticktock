@@ -150,6 +150,51 @@ class SettingsScreen extends ConsumerWidget {
     }
   }
 
+  Future<void> _confirmDeleteAccount(BuildContext context, WidgetRef ref) async {
+    final l10n = AppLocalizations.of(context)!;
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(l10n.deleteAccountConfirmTitle),
+        content: Text(l10n.deleteAccountConfirmMessage),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: Text(l10n.cancel),
+          ),
+          FilledButton(
+            style: FilledButton.styleFrom(
+              backgroundColor: Theme.of(ctx).colorScheme.error,
+              foregroundColor: Theme.of(ctx).colorScheme.onError,
+            ),
+            onPressed: () => Navigator.pop(ctx, true),
+            child: Text(l10n.deleteAccount),
+          ),
+        ],
+      ),
+    );
+    if (ok != true || !context.mounted) return;
+
+    final error = await ref.read(authProvider.notifier).deleteAccount();
+    if (!context.mounted) return;
+
+    if (error == null) {
+      await reloadUserData(ref);
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.accountDeleted)),
+      );
+      Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute<void>(builder: (_) => const LoginScreen()),
+        (_) => false,
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.deleteAccountFailed)),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
@@ -242,6 +287,14 @@ class SettingsScreen extends ConsumerWidget {
                 style: TextStyle(color: Theme.of(context).colorScheme.error),
               ),
               onTap: () => _logOut(context, ref),
+            ),
+            ListTile(
+              leading: Icon(Icons.delete_forever, color: Theme.of(context).colorScheme.error),
+              title: Text(
+                l10n.deleteAccount,
+                style: TextStyle(color: Theme.of(context).colorScheme.error),
+              ),
+              onTap: () => _confirmDeleteAccount(context, ref),
             ),
           ],
         ],

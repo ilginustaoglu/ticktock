@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' hide User;
@@ -7,6 +9,7 @@ import '../core/config/app_config.dart';
 import '../core/config/auth_config.dart';
 import '../core/database/profile_repository.dart';
 import '../core/database/supabase_service.dart';
+import '../core/storage/task_storage.dart';
 import '../core/storage/user_storage.dart';
 import '../core/utils/password_utils.dart';
 import '../models/user.dart';
@@ -250,6 +253,45 @@ class AuthNotifier extends StateNotifier<AuthState> {
     }
     await UserStorage.setCurrentUserId(null);
     state = const AuthState(status: AuthStatus.unauthenticated);
+  }
+
+  Future<String?> deleteAccount() async {
+    final current = state.user;
+    if (current == null) return 'invalidCredentials';
+
+    if (usesRemoteDb) {
+      try {
+        await SupabaseService.client.rpc('delete_own_account');
+      } catch (e) {
+        if (kDebugMode) debugPrint('TickTock deleteAccount: $e');
+        return 'deleteAccountFailed';
+      }
+      await UserStorage.setCurrentUserId(null);
+      try {
+        await SupabaseService.client.auth.signOut();
+      } catch (_) {}
+      state = const AuthState(status: AuthStatus.unauthenticated);
+      return null;
+    }
+
+    final users = UserStorage.getUsers();
+    users.removeWhere((u) => u.id == current.id);
+    await UserStorage.saveUsers(users);
+    await UserStorage.setCurrentUserId(null);
+
+    await TaskStorage.saveTodoLists([]);
+    await TaskStorage.saveTodoItems([]);
+    await TaskStorage.saveCalendarEvents([]);
+
+    if (current.profileImagePath != null) {
+      final file = File(current.profileImagePath!);
+      if (file.existsSync()) {
+        await file.delete();
+      }
+    }
+
+    state = const AuthState(status: AuthStatus.unauthenticated);
+    return null;
   }
 
   Future<void> updateProfile({

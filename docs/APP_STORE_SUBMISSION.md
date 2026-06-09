@@ -137,3 +137,161 @@ Tüm zorunlu alanlar dolu ve build seçili olmalı.
 - **Build listede çıkmıyor:** 10–15 dakika bekleyip sayfayı yenile; e-postayı kontrol et.
 
 İlk gönderimde en kritik noktalar: **doğru Bundle ID**, **signing** ve **App Store Connect’te build’i seçip Submit for Review** yapmak.
+
+---
+
+# Güncelleme gönderme (mevcut uygulama — TickTock 1.1.0)
+
+Sürüm projede **`1.1.0+2`** olarak ayarlı (`pubspec.yaml`).
+
+| Alan | Değer |
+|------|--------|
+| Bundle ID | `com.filginustaoglu.ticktockplanner` |
+| Version (görünen) | `1.1.0` |
+| Build | `2` |
+
+---
+
+## Senin yapacakların (sırayla)
+
+### 1. `.env` dosyasını kontrol et (build öncesi)
+
+Proje klasöründe `ticktock/.env` dolu olmalı (git’e gitmez, sadece senin Mac’inde):
+
+```
+SUPABASE_URL=https://sckssefvxywemepvgdli.supabase.co
+SUPABASE_ANON_KEY=sb_publishable_...
+```
+
+Publishable key olmalı; `sb_secret_` veya placeholder olmamalı. IPA alırken bu dosya uygulamaya gömülür.
+
+### 2. Supabase (canlı kullanıcılar)
+
+- [ ] **Authentication** → **URL Configuration** → Redirect URLs → `ticktock://login-callback`
+- [ ] Canlıda e-posta onayı istiyorsan **Confirm email** AÇIK + SMTP; geliştirme kolaylığı için KAPALI da olabilir
+- [ ] `database/migrations/001_profiles_email_confirmed.sql` çalıştırılmadıysa Supabase SQL Editor’da çalıştır
+
+### 3. Xcode signing
+
+```bash
+open /Users/ilgin/projects/ticktock/ios/Runner.xcworkspace
+```
+
+- **Runner** → **Signing & Capabilities**
+- **Team:** Apple Developer hesabın seçili
+- **Bundle Identifier:** `com.filginustaoglu.ticktockplanner` (değiştirme)
+- **Automatically manage signing** işaretli
+
+### 4. IPA oluştur
+
+Terminal:
+
+```bash
+cd /Users/ilgin/projects/ticktock
+flutter clean
+flutter pub get
+flutter build ipa --release
+```
+
+Başarılıysa: `build/ios/ipa/ticktock.ipa`
+
+Signing hatası alırsan Adım 3’ü tekrar kontrol et.
+
+### 5. IPA’yı yükle
+
+**Transporter (önerilen):**
+
+1. Mac App Store → **Transporter** indir/aç
+2. `build/ios/ipa/ticktock.ipa` sürükle
+3. **Deliver** → Apple ID ile giriş
+
+5–20 dakika sonra build App Store Connect’te görünür.
+
+### 6. App Store Connect — yeni sürüm
+
+1. [appstoreconnect.apple.com](https://appstoreconnect.apple.com) → **My Apps** → TickTock
+2. Sol menü **iOS App** → **+** veya **Add Version** → sürüm: **`1.1.0`**
+3. **What’s New** (örnek İngilizce):
+
+   ```
+   • Sign in and create an account
+   • Cloud sync for lists, tasks, and calendar
+   • Profile with photo and name
+   • Light / dark theme and multiple languages
+   ```
+
+4. **Build** bölümünde **+** → yüklediğin **1.1.0 (2)** build’ini seç
+5. Ekran görüntüleri arayüz çok değiştiyse güncelle (giriş, profil ekranları)
+6. **App Review Information** — giriş zorunlu olduğu için **demo hesap** ver:
+   - E-posta: (Supabase’te onaylı test hesabı)
+   - Şifre: (test şifresi)
+   - Not: “Test account is pre-confirmed in our backend.”
+
+### 7. Privacy & Export
+
+- **App Privacy** — hesap / e-posta topluyorsan güncelle
+- **Export Compliance** — genelde “No” (standart HTTPS şifreleme)
+
+### 8. İncelemeye gönder
+
+- **Add for Review** → **Submit for Review**
+- Durum: **Waiting for Review** (birkaç saat – 2 gün)
+
+---
+
+## Güncelleme kontrol listesi
+
+- [ ] `pubspec.yaml` → `1.1.0+2` (yapıldı)
+- [ ] `.env` dolu
+- [ ] `flutter build ipa` başarılı
+- [ ] IPA Transporter ile yüklendi
+- [ ] App Store Connect’te version **1.1.0**, build **2** seçildi
+- [ ] What’s New + demo hesap yazıldı
+- [ ] Submit for Review
+
+---
+
+## Apple reddi: Hesap silme (Guideline 5.1.1(v))
+
+Apple, hesap oluşturma olan uygulamalarda **uygulama içinden hesap silme** ister. TickTock’ta bu özellik **Ayarlar → Hesap → Hesabı sil** altında.
+
+### Supabase (zorunlu — canlı kullanıcılar için)
+
+Supabase SQL Editor’da şu migration’ı çalıştır:
+
+`database/migrations/002_delete_own_account.sql`
+
+Bu, oturum açmış kullanıcının kendi `auth.users` kaydını silmesini sağlar; profil, listeler, görevler ve takvim verileri CASCADE ile silinir.
+
+### Yeni build gönder
+
+1. `pubspec.yaml` → `1.1.1+3` (veya bir sonraki build numarası)
+2. `flutter build ipa --release`
+3. Transporter ile yükle
+4. App Store Connect’te yeni sürüm / build seç
+
+### App Review’a ekran kaydı (zorunlu)
+
+Apple, **fiziksel cihazda** çekilmiş bir ekran kaydı ister. Kayıtta şunlar görünmeli:
+
+1. Yeni hesap oluşturma veya demo hesapla giriş
+2. **Ayarlar → Hesabı sil** yoluna gitme
+3. Onay diyaloğu → silme → başarılı çıkış
+
+Kaydı **App Store Connect → App Review Information → Notes** alanına ekle (veya inceleme yanıtına yaz).
+
+Örnek not (İngilizce):
+
+```
+Account deletion is available in Settings → Account → Delete account.
+Screen recording attached showing sign-in, navigation to delete account, and full deletion flow.
+```
+
+---
+
+## Sonraki güncellemelerde
+
+Her yeni yüklemede `pubspec.yaml` içinde **build numarasını artır**:
+
+- `1.1.0+3`, `1.1.0+4` … (aynı sürüm, yeni build)
+- veya `1.2.0+3` (yeni özellik → sürüm numarasını da artır)
